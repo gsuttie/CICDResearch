@@ -4,30 +4,68 @@ trigger:
   - azure-pipelines
   - master
 
-pool:
-  vmImage: 'Ubuntu-16.04'
-strategy:
-  matrix:
-    Python35:
-      python.version: '3.5'
-    Python36:
-      python.version: '3.6'
-    Python37:
-      python.version: '3.7'
+jobs:
+  - job: Ubuntu_testing
+    # https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema#pool
+    pool:
+      vmImage: 'Ubuntu-16.04'
+    strategy:
+      matrix:
+        Python36:
+          python.version: '3.6'
+        Python37:
+          python.version: '3.7'
 
-steps:
-- task: UsePythonVersion@0
-  inputs:
-    versionSpec: '$(python.version)'
-  displayName: 'Use Python $(python.version)'
+    steps:
+      - task: UsePythonVersion@0
+        displayName: 'Get Python version $(python.version)'
+        inputs:
+          versionSpec: '$(python.version)'
+          architecture: 'x64'
+      - script: python -m pip install --upgrade pip
+        displayName: "Upgrade pip"
+      - script: |
+          # commands run within the step
+          pip install -r requirements.txt
+        displayName: 'Install dependencies'
+      - script: |
+          python -m pip install pylint --quiet
+          pylint boston/*.py
+          pylint iris/*.py
+        displayName: 'Run lint tests'
+      - script: |
+          pip install pytest pytest-azurepipelines
+          python -m pytest tests/
+        displayName: 'Test with pytest'
 
-- script: |
-    python -m pip install --upgrade pip
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
+  - job: Windows_testing
+    pool:
+      vmImage: 'windows-2019'
 
-- script: |
-    pip install pytest pytest-azurepipelines
-    pytest
-  displayName: 'pytest'
+      strategy:
+      matrix:
+        Python36:
+          python.version: '3.6'
+        Python37:
+          python.version: '3.7'
+
+      steps:
+        - task: UsePythonVersion@0
+          displayName: 'Get Python version $(python.version)' 
+          inputs:
+            versionSpec: '$(python.version)'
+            architecture: 'x64'
+          
+        - script: python -m pip install --upgrade pip
+          displayName: "Upgrade pip"
+
+        - script: |
+            # commands run within the step
+            pip install -r requirements.txt
+          displayName: 'Install dependencies'
+
+        - script: |
+            pip install pytest pytest-azurepipelines
+            python -m pytest tests/ 
+          displayName: 'Test with pytest'
 
