@@ -21,3 +21,9 @@ steps:
     # commands run within the step
     pip install -r requirements.txt
   displayName: 'Install dependencies'
+
+- script: |
+    python -m pip install pylint --quiet
+    pylint boston/*.py
+    pylint iris/*.py
+  displayName: 'Run lint tests'
