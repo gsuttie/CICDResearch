@@ -1,0 +1,20 @@
+# Python example Azure Pipeline
+
+trigger:
+  - master
+
+  # specific branch build
+pr:
+  branches:
+    include:
+    - master
+    exclude:
+    - feature/*  # regex wildcard (or any other regex)
+
+pool:
+  vmImage: 'Ubuntu-16.04'
+
+steps:
+  - script: echo "Hello World!"
+    displayName: "Run AZ pipelines Hello World"
+
