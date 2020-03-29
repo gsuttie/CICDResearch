@@ -4,39 +4,43 @@ trigger:
   - azure-pipelines
   - master
 
-pool:
-  vmImage: "ubuntu-16.04"
-strategy:
-  matrix:
-    Python35:
-      python.version: '3.5'
-    Python36:
-      python.version: '3.6'
-    Python37:
-      python.version: '3.7'
 
-steps:
-- task: UsePythonVersion@0
-  displayName: 'Use Python 3.6'
-  inputs:
-    versionSpec: '3.6'
-    architecture: 'x64'
+jobs:
+  - job: Ubuntu_testing
+    # https://docs.microsoft.com/en-us/azure/devops/pipelines/yaml-schema?view=azure-devops&tabs=schema#pool
+    pool:
+      vmImage: "ubuntu-16.04"
+    strategy:
+      matrix:
+        Python35:
+          python.version: '3.5'
+        Python36:
+          python.version: '3.6'
+        Python37:
+          python.version: '3.7'
 
-- script: python -m pip install --upgrade pip
-  displayName: "Upgrade pip"
+    steps:
+    - task: UsePythonVersion@0
+      displayName: 'Use Python 3.6'
+      inputs:
+        versionSpec: '3.6'
+        architecture: 'x64'
 
-- script: |
-    # commands run within the step
-    pip install -r requirements.txt
-  displayName: 'Install dependencies'
+    - script: python -m pip install --upgrade pip
+      displayName: "Upgrade pip"
 
-- script: |
-    pip install pytest
-    python -m pytest tests/
-  displayName: 'Test with pytest'
+    - script: |
+        # commands run within the step
+        pip install -r requirements.txt
+      displayName: 'Install dependencies'
 
-- script: |
-    python -m pip install pylint --quiet
-    pylint boston/*.py
-#    pylint iris/*.py
-  displayName: 'Run lint tests'
+    - script: |
+        pip install pytest
+        python -m pytest tests/
+      displayName: 'Test with pytest'
+
+    #- script: |
+    #    python -m pip install pylint --quiet
+    #    pylint boston/*.py
+    #    pylint iris/*.py
+    #  displayName: 'Run lint tests'
