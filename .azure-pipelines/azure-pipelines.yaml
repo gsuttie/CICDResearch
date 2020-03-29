@@ -22,8 +22,13 @@ steps:
     pip install -r requirements.txt
   displayName: 'Install dependencies'
 
+#- script: |
+#    python -m pip install pylint --quiet
+#    pylint boston/*.py
+#    pylint iris/*.py
+#  displayName: 'Run lint tests'
+
 - script: |
-    python -m pip install pylint --quiet
-    pylint boston/*.py
-    pylint iris/*.py
-  displayName: 'Run lint tests'
+    pip install pytest
+    python -m pytest tests/
+  displayName: 'Test with pytest'
