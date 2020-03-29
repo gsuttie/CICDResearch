@@ -12,8 +12,8 @@ pr:
     - feature/*  # regex wildcard (or any other regex)
 
 pool:
-    vmImage: 'Ubuntu-16.04
+    vmImage: 'Ubuntu-16.04'
 
 steps:
 - script: echo "Hello World!"
-  displayName: "Run AZ pipelines Hello World"
+  displayName: "Run AZ pipelines Hello"
