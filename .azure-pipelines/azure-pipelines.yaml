@@ -1,7 +1,5 @@
 # Python example Azure Pipeline
 
-# Python example Azure Pipeline
-
 trigger:
 - master
 
@@ -14,7 +12,7 @@ pr:
     - feature/*  # regex wildcard (or any other regex)
 
 pool:
-    vmImage: 'Ubuntu-16.04
+  vmImage: 'Ubuntu-16.04
 
 steps:
 - script: echo "Hello World!"
