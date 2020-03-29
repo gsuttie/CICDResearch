@@ -1,0 +1,36 @@
+# Docker
+# Build a Docker image
+# https://docs.microsoft.com/azure/devops/pipelines/languages/docker
+
+trigger:
+  - master
+  
+resources:
+  - repo: self
+
+variables:
+  tag: "$(Build.BuildId)"
+  imageName: "trallard/ci-research"
+
+stages:
+  - stage: Build
+    displayName: Build image
+    jobs:
+      - job: Build
+        displayName: Build
+        pool:
+          vmImage: "Ubuntu-18.04"
+        steps:
+          - task: Docker@2
+            displayName: Login DockerHub
+            inputs:
+              command: login
+              containerRegistry: trallard-docker
+          - task: Docker@2
+            displayName: Build an image
+            inputs:
+              command: buildAndPush
+              dockerfile: "**/Dockerfile"
+              repository: $(imageName)
+              tags: |
+                $(tag)
